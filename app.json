@@ -18,7 +18,7 @@
       "supportsTablet": true
     },
     "android": {
-      "package":"colTheDeveloper.todo",
+      "package": "colTheDeveloper.todo",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon1.PNG",
         "backgroundColor": "#ffffff"
@@ -26,6 +26,11 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "3b2a90b9-bcb0-4388-b6a6-f9f7ef9b343e"
+      }
     }
   }
 }
