@@ -1,31 +1,47 @@
 import { StatusBar } from 'expo-status-bar';
 import { Alert, FlatList, StyleSheet, Text, TextInput, View,TouchableWithoutFeedback,Keyboard } from 'react-native';
 import Header from './components/Header';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import TodoItem from './components/todoItem';
 import AddTodo from './components/addTodo';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 export default function App() {
-  const [todos,setTodos]=useState([
-    {text:"Buy Grocries", key:"1"},
-    {text:"Cook Rice", key:"2"},
-    {text:"Play Game", key:"3"},
-  ])
+  const [localData,setLocalData]=useState()
+  const [todos,setTodos]=useState(localData==null?[]:JSON.parse(localData))
+
+  useEffect(()=>{
+    const myTodos=async()=>{
+      try {
+        const data=await AsyncStorage.getItem("my-todos")
+        console.log(data)
+        setLocalData(data)
+      } catch (error) {
+        console.log(error)      
+      }
+    }
+    myTodos()
+  },[todos])
 
   const submitHandler=(text)=>{
     if(text.length<4){
       Alert.alert("OOPS","Todo must be more that 3 characters",[{text:"Understood", onPress:()=>console.log("closed")}])
       return;
     }
-    setTodos((prevTodos)=>{
-      return [{text:text, key:Math.random().toString()},...prevTodos]
+    setTodos(async(prevTodos)=>{
+      const newValue=prevTodos.unshift({text:text, key:Math.random().toString()})
+      console.log(newValue)
+      await AsyncStorage.setItem("my-todos",JSON.stringify(newValue))
+      return newValue
     })
   }
 
   const pressHandler=(key)=>{
-    setTodos((prevTodos)=>{
-      return prevTodos.filter(todo=>todo.key!=key)
+    setTodos(async(prevTodos)=>{
+      const newValue=prevTodos.filter(todo=>todo.key!=key)
+      await AsyncStorage.setItem("my-todos",JSON.stringify(newValue))
+      return newValue
     })
 
   }
